@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>*scratchpad*</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html {
+            background-color: #141414;
+            color: #F7F7FF;
+            margin: 1em;
+
+            font-family: sans-serif;
+            font-size: 1.5em;
+        }
+
+        body {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1em;
+        }
+
+        textarea {
+            background-color: #242325;
+            color: #F7F7FF;
+            width: 100%;
+            height: 600px;
+
+            font-size: 1.5em;
+            padding: .5em;
+        }
+
+        button {
+            background-color: #5C80BC;
+            color: #141414;
+            border-color: #8EA8C3;
+            padding: .3em .4em;
+
+            font-size: 1em;
+        }
+
+        label {
+            padding-left: .3em;
+            user-select: none;
+        }
+
+        #saving {
+            accent-color: #04E762;
+            height: 20px;
+            width: 20px;
+        }
+
+        a { color: #F7F7FF; }
+    </style>
+</head>
+<body>
+    <button onclick="clearTextarea();">Clear</button>
+    <button onclick="createExportFile();">Create export <code>.txt</code> file</button>
+    <div><input type="checkbox" id="saving" name="saving"><label for="saving">Save to Local Storage</label></div>
+
+    <textarea id="txtArea" placeholder="*scratchpad*" autofocus></textarea>
+
+    <script>
+        let saveCheck = document.getElementById("saving");
+        let textArea = document.getElementById("txtArea");
+
+        saveCheck.checked = (localStorage.getItem("scratchpadCheck") == "true");
+
+        if(saveCheck.checked) {
+            textArea.value = localStorage.getItem("scratchpadText");
+        }
+
+        textArea.addEventListener('input', () => {
+            if(saveCheck.checked) {
+                localStorage.setItem("scratchpadText", textArea.value);
+            }
+        })
+
+        saveCheck.addEventListener('click', (e) => {
+            localStorage.setItem("scratchpadCheck", saveCheck.checked);
+            
+            if(!saveCheck.checked) {
+                localStorage.clear();
+            } else {
+                localStorage.setItem("scratchpadText", textArea.value);
+            }
+        });
+
+        function createExportFile() {
+            var links = document.getElementsByTagName("a")
+            while(links.length) {
+                links[0].remove();
+            }
+
+            var link = document.createElement('a');
+            var today = new Date().toLocaleString().replace(',', '');
+
+            link.href = 'data:text/plain;charset=UTF-8,' + encodeURIComponent(textArea.value);
+            link.innerHTML = "Click here to download the export file [" + today + "]";
+            link.download = today + ".txt";
+            document.body.appendChild(link);
+        }
+
+        function clearTextarea() {
+            textArea.value = "";
+            localStorage.setItem("scratchpadText", "");
+        }
+    </script>
+</body>
+</html>
