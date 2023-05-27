@@ -32,6 +32,7 @@
             font-size: 1.5em;
             padding: 0.5em;
             outline: none;
+            tab-size : 4;
         }
 
         button {
@@ -83,7 +84,19 @@
             if(saveCheck.checked) {
                 localStorage.setItem("scratchpadText", textArea.value);
             }
-        })
+        });
+
+        textArea.addEventListener('keydown', (e) => {
+            if (e.key == 'Tab') {
+                e.preventDefault();
+                let start = textArea.selectionStart;
+                let end = textArea.selectionEnd;
+
+                textArea.value = textArea.value.slice(0, start) + "\t" + textArea.value.slice(end);
+
+                textArea.selectionStart = textArea.selectionEnd = start + 1;
+            }
+        });
 
         saveCheck.addEventListener('click', (e) => {
             localStorage.setItem("scratchpadCheck", saveCheck.checked);
